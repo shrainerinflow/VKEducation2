@@ -21,3 +21,18 @@ val sampleApps: List<AppInfo> = listOf(
     AppInfo(7, "VK Почта", "Удобный почтовый клиент для всех ящиков", "Продуктивность", R.drawable.ic_launcher_foreground),
     AppInfo(8, "VK Игры", "Мини-игры и большие хиты прямо в приложении", "Игры", R.drawable.ic_launcher_foreground),
 )
+
+// Витрина: ровно 9 приложений = 3 страницы по 3
+val sampleShowcase: List<AppInfo> = listOf(
+    AppInfo(11, "VK Облако", "Храните фото и файлы в безопасности", "Утилиты", R.drawable.ic_launcher_foreground),
+    AppInfo(12, "VK Карты", "Навигация и маршруты по городу", "Навигация", R.drawable.ic_launcher_foreground),
+    AppInfo(13, "VK Работа", "Поиск вакансий и резюме", "Работа", R.drawable.ic_launcher_foreground),
+    AppInfo(14, "VK Знания", "Курсы и обучающие материалы", "Образование", R.drawable.ic_launcher_foreground),
+    AppInfo(15, "VK Такси", "Быстрый заказ поездки", "Транспорт", R.drawable.ic_launcher_foreground),
+    AppInfo(16, "VK Фото", "Редактор и альбомы для снимков", "Фото", R.drawable.ic_launcher_foreground),
+    AppInfo(17, "VK Здоровье", "Трекер активности и сна", "Здоровье", R.drawable.ic_launcher_foreground),
+    AppInfo(18, "VK Книги", "Электронные и аудиокниги", "Книги", R.drawable.ic_launcher_foreground),
+    AppInfo(19, "VK Маркет", "Покупки у продавцов рядом", "Покупки", R.drawable.ic_launcher_foreground),
+)
+
+val allApps: List<AppInfo> = sampleApps + sampleShowcase

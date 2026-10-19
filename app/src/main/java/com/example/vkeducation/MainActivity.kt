@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.example.vkeducation.ui.AppListScreen
+import com.example.vkeducation.ui.AppNavHost
 import com.example.vkeducation.ui.theme.VKEducationTheme
 
 class MainActivity : ComponentActivity() {
@@ -13,7 +13,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             VKEducationTheme {
-                AppListScreen()
+                AppNavHost()
             }
         }
     }

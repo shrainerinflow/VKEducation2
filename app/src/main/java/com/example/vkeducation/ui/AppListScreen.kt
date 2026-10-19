@@ -40,6 +40,7 @@ import com.example.vkeducation.ui.theme.VKEducationTheme
 @Composable
 fun AppListScreen(
     apps: List<AppInfo> = sampleApps,
+    onAppClick: (AppInfo) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -71,15 +72,21 @@ fun AppListScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             items(items = apps, key = { it.id }) { app ->
-                AppListItem(app)
+                AppListItem(app = app, onClick = { onAppClick(app) })
             }
         }
     }
 }
 
+// Эта вёрстка переиспользуется и в списке, и в блоке «Витрина»
 @Composable
-fun AppListItem(app: AppInfo, modifier: Modifier = Modifier) {
+fun AppListItem(
+    app: AppInfo,
+    onClick: () -> Unit = {},
+    modifier: Modifier = Modifier,
+) {
     Card(
+        onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
