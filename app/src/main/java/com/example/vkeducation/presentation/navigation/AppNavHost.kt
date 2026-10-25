@@ -1,4 +1,4 @@
-package com.example.vkeducation.ui
+package com.example.vkeducation.presentation.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
@@ -7,6 +7,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.vkeducation.presentation.details.AppDetailsScreen
+import com.example.vkeducation.presentation.list.AppListScreen
 
 private const val ROUTE_LIST = "list"
 private const val ARG_APP_ID = "appId"
@@ -26,17 +28,13 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
             route = ROUTE_DETAILS,
             arguments = listOf(navArgument(ARG_APP_ID) { type = NavType.IntType }),
         ) { entry ->
-            val appId = entry.arguments?.getInt(ARG_APP_ID)
-            val app = allApps.firstOrNull { it.id == appId }
-            if (app != null) {
-                AppDetailsScreen(
-                    details = app.toDetails(),
-                    showcaseApps = sampleShowcase,
-                    onBackClick = { navController.popBackStack() },
-                    // клик по приложению из «Витрины» → список приложений
-                    onShowcaseAppClick = { navController.popBackStack(ROUTE_LIST, inclusive = false) },
-                )
-            }
+            val appId = entry.arguments?.getInt(ARG_APP_ID) ?: return@composable
+            AppDetailsScreen(
+                appId = appId,
+                onBackClick = { navController.popBackStack() },
+                // клик по приложению из «Витрины» → список приложений
+                onShowcaseAppClick = { navController.popBackStack(ROUTE_LIST, inclusive = false) },
+            )
         }
     }
 }

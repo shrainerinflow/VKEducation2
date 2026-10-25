@@ -1,4 +1,4 @@
-package com.example.vkeducation.ui
+package com.example.vkeducation.presentation.details
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -23,6 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -35,6 +36,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,36 +47,41 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.vkeducation.ui.theme.VKEducationTheme
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.vkeducation.R
+import com.example.vkeducation.domain.model.AppInfo
+import com.example.vkeducation.presentation.showcase.ShowcaseBlock
 import kotlinx.coroutines.launch
 
-/** Данные карточки (захардкожены, строятся из AppInfo). */
-data class AppDetails(
-    val app: AppInfo,
-    val developer: String,
-    val ageRating: Int,
-    val sizeMb: Float,
-    val description: String,
-)
+@Composable
+fun AppDetailsScreen(
+    appId: Int,
+    onBackClick: () -> Unit,
+    onShowcaseAppClick: (AppInfo) -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: AppDetailsViewModel = viewModel(
+        key = "details_$appId",
+        factory = AppDetailsViewModel.factory(appId),
+    ),
+) {
+    val state by viewModel.state.collectAsState()
 
-fun AppInfo.toDetails() = AppDetails(
-    app = this,
-    developer = "VK Play",
-    ageRating = 12,
-    sizeMb = 223.7f,
-    description = "$description. Лёгкий и быстрый интерфейс, регулярные обновления и " +
-            "поддержка на всех устройствах. Установите приложение и оцените все возможности " +
-            "самостоятельно: мы постоянно добавляем новые функции и улучшаем стабильность работы.",
-)
+    AppDetailsContent(
+        state = state,
+        onBackClick = onBackClick,
+        onRetryClick = viewModel::load,
+        onShowcaseAppClick = onShowcaseAppClick,
+        modifier = modifier,
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppDetailsScreen(
-    details: AppDetails,
-    showcaseApps: List<AppInfo>,
+fun AppDetailsContent(
+    state: AppDetailsState,
     onBackClick: () -> Unit,
+    onRetryClick: () -> Unit,
     onShowcaseAppClick: (AppInfo) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -103,55 +110,72 @@ fun AppDetailsScreen(
             )
         },
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState()),
-        ) {
-            Header(details, Modifier.padding(horizontal = 16.dp))
-            Spacer(Modifier.height(16.dp))
-            Button(
-                onClick = showUnderDevelopment,
-                shape = RoundedCornerShape(12.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-            ) { Text("Установить") }
-            Spacer(Modifier.height(16.dp))
-            Screenshots()
-            Spacer(Modifier.height(16.dp))
-            Description(details.description, Modifier.padding(horizontal = 16.dp))
-            Spacer(Modifier.height(12.dp))
-            HorizontalDivider(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                color = MaterialTheme.colorScheme.outlineVariant,
-            )
-            DeveloperRow(details.developer, onClick = showUnderDevelopment)
-            Spacer(Modifier.height(16.dp))
+        when (state) {
+            AppDetailsState.Loading -> Box(
+                modifier = Modifier.fillMaxSize().padding(innerPadding),
+                contentAlignment = Alignment.Center,
+            ) { CircularProgressIndicator() }
 
-            // Блок «Витрина» — в самом низу карточки
-            ShowcaseBlock(apps = showcaseApps, onAppClick = onShowcaseAppClick)
+            AppDetailsState.Error -> Column(
+                modifier = Modifier.fillMaxSize().padding(innerPadding),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text("Не удалось загрузить приложение")
+                Button(onClick = onRetryClick) { Text("Повторить") }
+            }
+
+            is AppDetailsState.Content -> Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .verticalScroll(rememberScrollState()),
+            ) {
+                Header(state.app, Modifier.padding(horizontal = 16.dp))
+                Spacer(Modifier.height(16.dp))
+                Button(
+                    onClick = showUnderDevelopment,
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                ) { Text("Установить") }
+                Spacer(Modifier.height(16.dp))
+                Screenshots()
+                Spacer(Modifier.height(16.dp))
+                Description(state.app.fullDescription, Modifier.padding(horizontal = 16.dp))
+                Spacer(Modifier.height(12.dp))
+                HorizontalDivider(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    color = MaterialTheme.colorScheme.outlineVariant,
+                )
+                TextButton(
+                    onClick = showUnderDevelopment,
+                    modifier = Modifier.padding(start = 8.dp),
+                ) { Text("Разработчик: ${state.app.developer}") }
+                Spacer(Modifier.height(16.dp))
+
+                // Блок «Витрина» — в самом низу карточки
+                ShowcaseBlock(apps = state.showcase, onAppClick = onShowcaseAppClick)
+            }
         }
     }
 }
 
 @Composable
-private fun Header(details: AppDetails, modifier: Modifier = Modifier) {
+private fun Header(app: AppInfo, modifier: Modifier = Modifier) {
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
         Image(
-            painter = painterResource(details.app.iconRes),
-            contentDescription = details.app.name,
+            painter = painterResource(R.drawable.ic_launcher_foreground),
+            contentDescription = app.name,
             modifier = Modifier
                 .size(96.dp)
                 .clip(RoundedCornerShape(20.dp))
                 .background(MaterialTheme.colorScheme.primaryContainer),
         )
         Column(Modifier.padding(start = 16.dp)) {
-            Text(details.app.name, style = MaterialTheme.typography.headlineSmall)
-            Text(details.developer, color = MaterialTheme.colorScheme.primary)
+            Text(app.name, style = MaterialTheme.typography.headlineSmall)
+            Text(app.developer, color = MaterialTheme.colorScheme.primary)
             Text(
-                text = "${details.app.category} · ${details.ageRating}+ · ${details.sizeMb} МБ",
+                text = "${app.category} · ${app.ageRating}+ · ${app.sizeMb} МБ",
                 style = MaterialTheme.typography.bodySmall,
             )
         }
@@ -189,25 +213,5 @@ private fun Description(text: String, modifier: Modifier = Modifier) {
         if (!expanded) {
             TextButton(onClick = { expanded = true }) { Text("Читать далее") }
         }
-    }
-}
-
-@Composable
-private fun DeveloperRow(name: String, onClick: () -> Unit) {
-    TextButton(onClick = onClick, modifier = Modifier.padding(start = 8.dp)) {
-        Text("Разработчик: $name")
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun AppDetailsScreenPreview() {
-    VKEducationTheme {
-        AppDetailsScreen(
-            details = sampleApps.first().toDetails(),
-            showcaseApps = sampleShowcase,
-            onBackClick = {},
-            onShowcaseAppClick = {},
-        )
     }
 }

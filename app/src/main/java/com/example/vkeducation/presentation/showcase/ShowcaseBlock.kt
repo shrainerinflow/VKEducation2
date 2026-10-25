@@ -1,4 +1,4 @@
-package com.example.vkeducation.ui
+package com.example.vkeducation.presentation.showcase
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,9 +19,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.vkeducation.ui.theme.VKEducationTheme
+import com.example.vkeducation.domain.model.AppInfo
+import com.example.vkeducation.presentation.common.AppListItem
 
 private const val APPS_PER_PAGE = 3
 
@@ -53,9 +53,7 @@ fun ShowcaseBlock(
             }
         }
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp),
+            modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
             horizontalArrangement = Arrangement.Center,
         ) {
             repeat(pages.size) { index ->
@@ -73,10 +71,4 @@ fun ShowcaseBlock(
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun ShowcaseBlockPreview() {
-    VKEducationTheme { ShowcaseBlock(apps = sampleShowcase, onAppClick = {}) }
 }
