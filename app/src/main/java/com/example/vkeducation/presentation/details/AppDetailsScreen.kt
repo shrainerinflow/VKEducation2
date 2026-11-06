@@ -48,7 +48,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.vkeducation.R
 import com.example.vkeducation.domain.model.AppInfo
 import com.example.vkeducation.presentation.showcase.ShowcaseBlock
@@ -56,14 +56,10 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun AppDetailsScreen(
-    appId: Int,
     onBackClick: () -> Unit,
     onShowcaseAppClick: (AppInfo) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: AppDetailsViewModel = viewModel(
-        key = "details_$appId",
-        factory = AppDetailsViewModel.factory(appId),
-    ),
+    viewModel: AppDetailsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
 

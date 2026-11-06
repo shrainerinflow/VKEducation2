@@ -2,9 +2,12 @@ package com.example.vkeducation.data.source
 
 import com.example.vkeducation.data.dto.AppDto
 import kotlinx.coroutines.delay
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /** Источник данных: тут живёт весь захардкоженный список (в виде DTO). */
-class AppsLocalDataSource {
+@Singleton
+class AppsLocalDataSource @Inject constructor() {
 
     private val apps: List<AppDto> = listOf(
         dto(1, "VK", "Социальная сеть: друзья, сообщества, музыка и видео", "Социальные сети"),

@@ -2,11 +2,8 @@ package com.example.vkeducation.presentation.list
 
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.vkeducation.di.AppContainer
+import dagger.hilt.android.lifecycle.HiltViewModel
 import com.example.vkeducation.domain.model.AppInfo
 import com.example.vkeducation.domain.usecase.GetAppsUseCase
 import kotlinx.coroutines.CancellationException
@@ -16,6 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @Immutable
 sealed interface AppListState {
@@ -28,7 +26,8 @@ sealed interface AppListEvent {
     data object ShowLogoMessage : AppListEvent
 }
 
-class AppListViewModel(
+@HiltViewModel
+class AppListViewModel @Inject constructor(
     private val getAppsUseCase: GetAppsUseCase,
 ) : ViewModel() {
 
@@ -57,11 +56,5 @@ class AppListViewModel(
 
     fun onLogoClick() {
         viewModelScope.launch { _events.send(AppListEvent.ShowLogoMessage) }
-    }
-
-    companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer { AppListViewModel(AppContainer.getAppsUseCase) }
-        }
     }
 }

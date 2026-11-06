@@ -2,11 +2,9 @@ package com.example.vkeducation.presentation.details
 
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.vkeducation.di.AppContainer
+import dagger.hilt.android.lifecycle.HiltViewModel
 import com.example.vkeducation.domain.model.AppInfo
 import com.example.vkeducation.domain.usecase.GetAppUseCase
 import com.example.vkeducation.domain.usecase.GetShowcaseAppsUseCase
@@ -15,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @Immutable
 sealed interface AppDetailsState {
@@ -23,11 +22,15 @@ sealed interface AppDetailsState {
     data class Content(val app: AppInfo, val showcase: List<AppInfo>) : AppDetailsState
 }
 
-class AppDetailsViewModel(
-    private val appId: Int,
+@HiltViewModel
+class AppDetailsViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val getAppUseCase: GetAppUseCase,
     private val getShowcaseAppsUseCase: GetShowcaseAppsUseCase,
 ) : ViewModel() {
+
+    // id приложения приходит из аргумента навигации "appId" (Hilt кладёт его в SavedStateHandle)
+    private val appId: Int = checkNotNull(savedStateHandle["appId"])
 
     private val _state = MutableStateFlow<AppDetailsState>(AppDetailsState.Loading)
     val state: StateFlow<AppDetailsState> = _state.asStateFlow()
@@ -50,18 +53,6 @@ class AppDetailsViewModel(
                 throw e
             } catch (e: Exception) {
                 AppDetailsState.Error
-            }
-        }
-    }
-
-    companion object {
-        fun factory(appId: Int): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                AppDetailsViewModel(
-                    appId = appId,
-                    getAppUseCase = AppContainer.getAppUseCase,
-                    getShowcaseAppsUseCase = AppContainer.getShowcaseAppsUseCase,
-                )
             }
         }
     }

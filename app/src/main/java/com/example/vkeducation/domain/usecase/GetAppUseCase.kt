@@ -2,7 +2,10 @@ package com.example.vkeducation.domain.usecase
 
 import com.example.vkeducation.domain.model.AppInfo
 import com.example.vkeducation.domain.repository.AppRepository
+import javax.inject.Inject
 
-class GetAppUseCase(private val repository: AppRepository) {
+class GetAppUseCase @Inject constructor(
+    private val repository: AppRepository,
+) {
     suspend operator fun invoke(id: Int): AppInfo? = repository.getApp(id)
 }

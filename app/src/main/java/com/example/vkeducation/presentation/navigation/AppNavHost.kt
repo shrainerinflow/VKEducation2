@@ -27,10 +27,8 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
         composable(
             route = ROUTE_DETAILS,
             arguments = listOf(navArgument(ARG_APP_ID) { type = NavType.IntType }),
-        ) { entry ->
-            val appId = entry.arguments?.getInt(ARG_APP_ID) ?: return@composable
+        ) {
             AppDetailsScreen(
-                appId = appId,
                 onBackClick = { navController.popBackStack() },
                 // клик по приложению из «Витрины» → список приложений
                 onShowcaseAppClick = { navController.popBackStack(ROUTE_LIST, inclusive = false) },
