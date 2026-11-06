@@ -26,7 +26,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
 
         composable(
             route = ROUTE_DETAILS,
-            arguments = listOf(navArgument(ARG_APP_ID) { type = NavType.IntType }),
+            arguments = listOf(navArgument(ARG_APP_ID) { type = NavType.StringType }),
         ) {
             AppDetailsScreen(
                 onBackClick = { navController.popBackStack() },

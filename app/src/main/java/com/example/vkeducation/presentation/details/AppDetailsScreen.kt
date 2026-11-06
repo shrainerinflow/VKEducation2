@@ -1,6 +1,5 @@
 package com.example.vkeducation.presentation.details
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -45,12 +44,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.vkeducation.R
 import com.example.vkeducation.domain.model.AppInfo
+import com.example.vkeducation.presentation.common.AppIcon
 import com.example.vkeducation.presentation.showcase.ShowcaseBlock
 import kotlinx.coroutines.launch
 
@@ -137,7 +135,7 @@ fun AppDetailsContent(
                 Spacer(Modifier.height(16.dp))
                 Screenshots()
                 Spacer(Modifier.height(16.dp))
-                Description(state.app.fullDescription, Modifier.padding(horizontal = 16.dp))
+                Description(state.app.description, Modifier.padding(horizontal = 16.dp))
                 Spacer(Modifier.height(12.dp))
                 HorizontalDivider(
                     modifier = Modifier.padding(horizontal = 16.dp),
@@ -146,7 +144,7 @@ fun AppDetailsContent(
                 TextButton(
                     onClick = showUnderDevelopment,
                     modifier = Modifier.padding(start = 8.dp),
-                ) { Text("Разработчик: ${state.app.developer}") }
+                ) { Text("Категория: ${state.app.category}") }
                 Spacer(Modifier.height(16.dp))
 
                 // Блок «Витрина» — в самом низу карточки
@@ -159,20 +157,18 @@ fun AppDetailsContent(
 @Composable
 private fun Header(app: AppInfo, modifier: Modifier = Modifier) {
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-        Image(
-            painter = painterResource(R.drawable.ic_launcher_foreground),
+        AppIcon(
+            url = app.iconUrl,
             contentDescription = app.name,
-            modifier = Modifier
-                .size(96.dp)
-                .clip(RoundedCornerShape(20.dp))
-                .background(MaterialTheme.colorScheme.primaryContainer),
+            size = 96.dp,
+            cornerRadius = 20.dp,
         )
         Column(Modifier.padding(start = 16.dp)) {
             Text(app.name, style = MaterialTheme.typography.headlineSmall)
-            Text(app.developer, color = MaterialTheme.colorScheme.primary)
             Text(
-                text = "${app.category} · ${app.ageRating}+ · ${app.sizeMb} МБ",
-                style = MaterialTheme.typography.bodySmall,
+                text = app.category,
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.bodyMedium,
             )
         }
     }

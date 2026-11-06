@@ -7,5 +7,5 @@ import javax.inject.Inject
 class GetAppUseCase @Inject constructor(
     private val repository: AppRepository,
 ) {
-    suspend operator fun invoke(id: Int): AppInfo? = repository.getApp(id)
+    suspend operator fun invoke(id: String): AppInfo? = repository.getApp(id)
 }

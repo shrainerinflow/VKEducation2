@@ -30,7 +30,7 @@ class AppDetailsViewModel @Inject constructor(
 ) : ViewModel() {
 
     // id приложения приходит из аргумента навигации "appId" (Hilt кладёт его в SavedStateHandle)
-    private val appId: Int = checkNotNull(savedStateHandle["appId"])
+    private val appId: String = checkNotNull(savedStateHandle["appId"])
 
     private val _state = MutableStateFlow<AppDetailsState>(AppDetailsState.Loading)
     val state: StateFlow<AppDetailsState> = _state.asStateFlow()

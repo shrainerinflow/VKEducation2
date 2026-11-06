@@ -1,12 +1,13 @@
 package com.example.vkeducation.data.dto
 
+/**
+ * DTO элемента каталога (GET /catalog). Поля nullable, как у настоящего ответа сервера.
+ * Наружу из data-слоя не уходит: перед этим конвертируется Mapper-ом в доменную модель.
+ */
 data class AppDto(
-    val id: Int?,
+    val id: String?,
     val name: String?,
     val description: String?,
-    val fullDescription: String?,
     val category: String?,
-    val developer: String?,
-    val ageRating: Int?,
-    val sizeMb: Float?,
+    val iconUrl: String?,
 )

@@ -1,13 +1,14 @@
-package com.example.vkeducation.domain.model
+package com.example.vkeducation.domain.repository
 
-/** Доменная модель приложения. Ничего не знает ни про Android, ни про сеть. */
-data class AppInfo(
-    val id: Int,
-    val name: String,
-    val description: String,
-    val fullDescription: String,
-    val category: String,
-    val developer: String,
-    val ageRating: Int,
-    val sizeMb: Float,
-)
+import com.example.vkeducation.domain.model.AppInfo
+
+/** Интерфейс репозитория: объявлен в domain, реализован в data. */
+interface AppRepository {
+    /** Каталог приложений с сервера. */
+    suspend fun getApps(): List<AppInfo>
+    suspend fun getShowcaseApps(): List<AppInfo>
+    suspend fun getApp(id: String): AppInfo?
+
+    /** Запрос подробной информации по id (GET /{id}). Пока нигде не используется в UI. */
+    suspend fun getAppDetails(id: String): AppInfo?
+}
